@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}إنشاء طلب جديد{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="fas fa-plus me-2"></i>إنشاء طلب صيانة جديد</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">عنوان الطلب</label>
+                        {{ form.title }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">وصف المشكلة</label>
+                        {{ form.description }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">صورة (اختيارية)</label>
+                        {{ form.image }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.request_type.id_for_label }}" class="form-label">نوع الطلب</label>
+                        {{ form.request_type }}
+                        <div class="form-text">
+                            <strong>طلب خاص:</strong> يُرسل لمهندس محدد فقط<br>
+                            <strong>طلب عام:</strong> يظهر لجميع المهندسين ويمكنهم تقديم عروض
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" id="engineer-selection" style="display: none;">
+                        <label for="{{ form.assigned_engineer.id_for_label }}" class="form-label">اختر المهندس</label>
+                        {{ form.assigned_engineer }}
+                    </div>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'services:dashboard' %}" class="btn btn-secondary">إلغاء</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>إنشاء الطلب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const requestTypeField = document.getElementById('{{ form.request_type.id_for_label }}');
+    const engineerSelection = document.getElementById('engineer-selection');
+    
+    function toggleEngineerSelection() {
+        if (requestTypeField.value === 'private') {
+            engineerSelection.style.display = 'block';
+        } else {
+            engineerSelection.style.display = 'none';
+        }
+    }
+    
+    requestTypeField.addEventListener('change', toggleEngineerSelection);
+    toggleEngineerSelection(); // تشغيل الدالة عند تحميل الصفحة
+});
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}تقديم عرض{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4><i class="fas fa-handshake me-2"></i>تقديم عرض</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6>تفاصيل الطلب:</h6>
+                    <strong>{{ service_request.title }}</strong><br>
+                    <small>{{ service_request.description|truncatewords:30 }}</small>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.details.id_for_label }}" class="form-label">تفاصيل العرض</label>
+                        {{ form.details }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.duration.id_for_label }}" class="form-label">المدة المتوقعة</label>
+                                {{ form.duration }}
+                                <div class="form-text">مثال: 3 أيام، أسبوع، إلخ</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.price.id_for_label }}" class="form-label">السعر (ريال)</label>
+                                {{ form.price }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'services:dashboard' %}" class="btn btn-secondary">إلغاء</a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-2"></i>تقديم العرض
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

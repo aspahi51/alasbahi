@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}  لوحة تحكم المهندس {% endblock %}
+
+  
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2><i class="fas fa-cogs me-2"></i>لوحة تحكم المهندس</h2>
+    </div>
+</div>
+
+<!-- الطلبات الخاصة -->
+{% if private_requests %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="fas fa-user-lock me-2"></i>الطلبات الخاصة الموجّهة لك</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for request in private_requests %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ request.title }}</h6>
+                                    <p class="card-text">{{ request.description|truncatewords:20 }}</p>
+                                    <small class="text-muted">العميل: {{ request.client.first_name }} {{ request.client.last_name }}</small>
+                                    <div class="mt-2">
+                                        <a href="{% url 'services:request_detail' request.id %}" class="btn btn-sm btn-outline-primary">تفاصيل</a>
+                                        <a href="{% url 'services:create_offer' request.id %}" class="btn btn-sm btn-warning">تقديم رد</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- الطلبات العامة -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-globe me-2"></i>الطلبات العامة المتاحة</h5>
+            </div>
+            <div class="card-body">
+                {% if public_requests %}
+                    <div class="row">
+                        {% for request in public_requests %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ request.title }}</h6>
+                                        <p class="card-text">{{ request.description|truncatewords:20 }}</p>
+                                        <small class="text-muted">العميل: {{ request.client.first_name }} {{ request.client.last_name }}</small>
+                                        <div class="mt-2">
+                                            <a href="{% url 'services:request_detail' request.id %}" class="btn btn-sm btn-outline-primary">تفاصيل</a>
+                                            <a href="{% url 'services:create_offer' request.id %}" class="btn btn-sm btn-success">تقديم عرض</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">لا توجد طلبات عامة متاحة حالياً</h6>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- المشاريع المقبولة -->
+{% if accepted_requests %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-handshake me-2"></i>المشاريع المقبولة</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for request in accepted_requests %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ request.title }}</h6>
+                                    <p class="card-text">{{ request.description|truncatewords:15 }}</p>
+                                    <small class="text-muted">العميل: {{ request.client.first_name }} {{ request.client.last_name }}</small>
+                                    <br>
+                                    <span class="badge bg-primary">{{ request.get_status_display }}</span>
+                                    <div class="mt-2">
+                                        <a href="{% url 'services:request_detail' request.id %}" class="btn btn-sm btn-outline-primary">تفاصيل</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- العروض المقدمة -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list-alt me-2"></i>عروضي المقدمة</h5>
+            </div>
+            <div class="card-body">
+                {% if my_offers %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>عنوان الطلب</th>
+                                    <th>السعر المقترح</th>
+                                    <th>المدة</th>
+                                    <th>حالة العرض</th>
+                                    <th>تاريخ التقديم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for offer in my_offers %}
+                                    <tr>
+                                        <td>{{ offer.service_request.title }}</td>
+                                        <td>{{ offer.price }} ريال</td>
+                                        <td>{{ offer.duration }}</td>
+                                        <td>
+                                            {% if offer.status == 'pending' %}
+                                                <span class="badge bg-warning">قيد الانتظار</span>
+                                            {% elif offer.status == 'accepted' %}
+                                                <span class="badge bg-success">مقبول</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">مرفوض</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ offer.created|date:"Y/m/d" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">لم تقدم أي عروض بعد</h6>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

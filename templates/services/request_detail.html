@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}تفاصيل الطلب - {{ service_request.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>{{ service_request.title }}</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-info">{{ service_request.get_request_type_display }}</span>
+                    {% if service_request.status == 'pending' %}
+                        <span class="badge bg-warning">{{ service_request.get_status_display }}</span>
+                    {% elif service_request.status == 'accepted' %}
+                        <span class="badge bg-info">{{ service_request.get_status_display }}</span>
+                    {% elif service_request.status == 'in_progress' %}
+                        <span class="badge bg-primary">{{ service_request.get_status_display }}</span>
+                    {% elif service_request.status == 'completed' %}
+                        <span class="badge bg-success">{{ service_request.get_status_display }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">{{ service_request.get_status_display }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <h6>الوصف:</h6>
+                <p class="text-muted">{{ service_request.description }}</p>
+                
+                {% if service_request.image %}
+                    <div class="mb-3">
+                        <h6>الصورة المرفقة:</h6>
+                        <img src="{{ service_request.image.url }}" class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>العميل:</strong> {{ service_request.client.first_name }} {{ service_request.client.last_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>تاريخ الإنشاء:</strong> {{ service_request.created|date:"Y/m/d H:i" }}
+                    </div>
+                </div>
+                
+                {% if service_request.assigned_engineer %}
+                    <div class="mt-2">
+                        <strong>المهندس المعين:</strong> 
+                        <a href="{% url 'services:engineer_profile' service_request.assigned_engineer.id %}">
+                            {{ service_request.assigned_engineer.first_name }} {{ service_request.assigned_engineer.last_name }}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- التقييم إذا كان موجود -->
+        {% if service_request.rating %}
+            <div class="card mt-3">
+                <div class="card-header bg-warning text-dark">
+                    <h5><i class="fas fa-star me-2"></i>التقييم</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="rating-stars">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= service_request.rating.stars %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2">{{ service_request.rating.stars }}/5</span>
+                            </div>
+                            {% if service_request.rating.comment %}
+                                <p class="mt-2">{{ service_request.rating.comment }}</p>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ service_request.rating.created|date:"Y/m/d" }}</small>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>العروض المقدمة</h5>
+            </div>
+            <div class="card-body">
+                {% if offers %}
+                    {% for offer in offers %}
+                        <div class="card mb-3 {% if offer.status == 'accepted' %}border-success{% elif offer.status == 'rejected' %}border-danger{% endif %}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6>
+                                            <a href="{% url 'services:engineer_profile' offer.engineer.id %}">
+                                                {{ offer.engineer.first_name }} {{ offer.engineer.last_name }}
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small">{{ offer.details|truncatewords:15 }}</p>
+                                        <div>
+                                            <strong>السعر:</strong> {{ offer.price }} ريال<br>
+                                            <strong>المدة:</strong> {{ offer.duration }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {% if offer.status == 'pending' %}
+                                            <span class="badge bg-warning">قيد الانتظار</span>
+                                        {% elif offer.status == 'accepted' %}
+                                            <span class="badge bg-success">مقبول</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">مرفوض</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                {% if user == service_request.client and offer.status == 'pending' %}
+                                    <div class="mt-2">
+                                        <a href="{% url 'services:accept_offer' offer.id %}" 
+                                           class="btn btn-sm btn-success"
+                                           onclick="return confirm('هل أنت متأكد من قبول هذا العرض؟')">
+                                            قبول
+                                        </a>
+                                        <a href="{% url 'services:reject_offer' offer.id %}" 
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('هل أنت متأكد من رفض هذا العرض؟')">
+                                            رفض
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">لا توجد عروض بعد</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{% url 'services:dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>العودة للوحة التحكم
+        </a>
+    </div>
+</div>
+{% endblock %}
