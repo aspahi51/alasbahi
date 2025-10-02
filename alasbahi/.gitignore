@@ -1,16 +1,22 @@
-# Byte-compiled / cache
+# ==============================
+# Byte-compiled / Cache
+# ==============================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *$py.class
 
-# Virtual environment
+# ==============================
+# Virtual Environment
+# ==============================
 venv/
 env/
 .venv/
 
-# Django stuff
+# ==============================
+# Django Files
+# ==============================
 *.log
 *.pot
 *.pyc
@@ -20,16 +26,87 @@ media/
 staticfiles/
 static/
 
-# Environment variables
+# ==============================
+# Environment Variables
+# ==============================
 .env
 *.env
 
-# IDEs and editors
+# ==============================
+# IDEs and Editors
+# ==============================
 .vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
 
-# OS files
+# ==============================
+# OS Generated Files
+# ==============================
 .DS_Store
 Thumbs.db
+
+# ==============================
+# Pytest / Coverage
+# ==============================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ==============================
+# Jupyter Notebooks
+# ==============================
+.ipynb_checkpoints
+
+# ==============================
+# Distribution / Packaging
+# ==============================
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==============================
+# Django Migrations (Optional)
+# ==============================
+# يمكن رفعها إذا أردت مشاركة التغييرات مع الفريق
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# ==============================
+# Logs and Temporary Files
+# ==============================
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.swo
+*~
+
+# ==============================
+# Miscellaneous
+# ==============================
+pip-log.txt
+pip-delete-this-directory.txt
