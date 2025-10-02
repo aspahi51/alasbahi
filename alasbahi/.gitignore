@@ -21,8 +21,8 @@ staticfiles/
 static/
 
 # Environment variables
-.venv
-*.venv
+.env
+*.env
 
 # IDEs and editors
 .vscode/
